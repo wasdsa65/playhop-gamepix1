@@ -7,7 +7,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     if (provider === 'firestore') {
       // 动态导入 firebase 相关模块
-      const { getDb } = await import('../../lib/firebase');
+      const { getDb } = await import('@/lib/firebase');
       const { collection, getDocs, orderBy, limit, query } = await import('firebase/firestore');
       
       const db = getDb();
@@ -18,7 +18,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(200).json({ items });
     } else {
       // 动态导入 supabase 相关模块
-      const { supabase } = await import('../../lib/supabase');
+      const { supabase } = await import('@/lib/supabase');
       
       if (!supabase) throw new Error('Supabase not configured');
       const { data, error } = await supabase.from('leaderboard')
