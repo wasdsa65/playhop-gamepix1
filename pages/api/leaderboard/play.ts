@@ -40,7 +40,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           { onConflict: 'id', ignoreDuplicates: false }
         ).select();
         if (error) throw error;
-        await supabase.rpc('inc_play', { gid: String(id) }).catch(()=>{});
+        try {
+          await supabase.rpc('inc_play', { gid: String(id) });
+        } catch (rpcError) {
+          console.error('RPC error:', rpcError);
+        }
       }
     } else {
       // 检查 Supabase 环境变量
@@ -57,7 +61,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       ).select();
       if (error) throw error;
       // increment plays
-      await supabase.rpc('inc_play', { gid: String(id) }).catch(()=>{});
+      try {
+        await supabase.rpc('inc_play', { gid: String(id) });
+      } catch (rpcError) {
+        console.error('RPC error:', rpcError);
+      }
     }
     res.status(200).json({ ok: true });
   } catch (e:any) {
