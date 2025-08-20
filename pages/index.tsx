@@ -3,9 +3,9 @@ import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Gamepad2, Play, ExternalLink, Moon, Sun, Filter, Loader2, ChevronDown, Languages } from 'lucide-react';
-import { LanguageProvider, useI18n } from '@/components/Language';
-import Leaderboard, { bumpPlayRemote } from '@/components/Leaderboard';
-import AdSlot from '@/components/AdSlot';
+import { LanguageProvider, useI18n } from '../components/Language';
+import Leaderboard, { bumpPlayRemote } from '../components/Leaderboard';
+import AdSlot from '../components/AdSlot';
 import clsx from 'clsx';
 
 type Game = { id: string; title: string; category?: string; thumb?: string; url: string; tags?: string[]; rating?: number };
