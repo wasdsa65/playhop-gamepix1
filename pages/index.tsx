@@ -38,9 +38,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
   }
 };
 
-function Navbar({ dark, setDark, q, setQ, category, setCategory, categories, lang, setLang }:
-  { dark:boolean,setDark:(v:boolean)=>void,q:string,setQ:(v:string)=>void,category:string,setCategory:(v:string)=>void,categories:string[],lang:'en'|'zh',setLang:(l:'en'|'zh')=>void }) {
-  const { t } = useI18n();
+function Navbar({ dark, setDark, q, setQ, category, setCategory, categories, lang, setLang, t }:
+  { dark:boolean,setDark:(v:boolean)=>void,q:string,setQ:(v:string)=>void,category:string,setCategory:(v:string)=>void,categories:string[],lang:'en'|'zh',setLang:(l:'en'|'zh')=>void, t:(key:string)=>string }) {
   return (
     <header className="sticky top-0 z-40 backdrop-blur bg-white/90 dark:bg-zinc-900/90 border-b">
       <div className="mx-auto max-w-7xl px-4 py-3 flex items-center gap-3">
@@ -92,8 +91,7 @@ function Navbar({ dark, setDark, q, setQ, category, setCategory, categories, lan
   );
 }
 
-function PlayerModal({ open, game, onClose }:{open:boolean, game:Game|null, onClose:()=>void}){
-  const { t } = useI18n();
+function PlayerModal({ open, game, onClose, t }:{open:boolean, game:Game|null, onClose:()=>void, t:(key:string)=>string}){
   return (
     <AnimatePresence>
       {open && (
@@ -188,7 +186,7 @@ export default function Home({ initial, sid }: Props) {
         <link rel="canonical" href={process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'} />
       </Head>
 
-      <Navbar dark={dark} setDark={setDark} q={q} setQ={setQ} category={category} setCategory={setCategory} categories={categories} lang={lang} setLang={setLang} />
+      <Navbar dark={dark} setDark={setDark} q={q} setQ={setQ} category={category} setCategory={setCategory} categories={categories} lang={lang} setLang={setLang} t={t} />
 
       <main className="mx-auto max-w-7xl px-4 py-6">
         <section className="mb-6">
@@ -272,7 +270,7 @@ export default function Home({ initial, sid }: Props) {
         </section>
       </main>
 
-      <PlayerModal open={open} game={current} onClose={()=>setOpen(false)} />
+      <PlayerModal open={open} game={current} onClose={()=>setOpen(false)} t={t} />
 
       <footer className="mt-16 border-t">
         <div className="mx-auto max-w-7xl px-4 py-8 text-center text-sm opacity-70">
