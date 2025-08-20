@@ -16,7 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
         
         // 动态导入 firebase 相关模块
-        const { getDb } = await import('../../lib/firebase');
+        const { getDb } = await import('@/lib/firebase');
         const { doc, getDoc, setDoc, updateDoc, increment } = await import('firebase/firestore');
         
         const db = getDb();
@@ -33,7 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
           throw new Error('Neither Firebase nor Supabase configured');
         }
-        const { supabase } = await import('../../lib/supabase');
+        const { supabase } = await import('@/lib/supabase');
         if (!supabase) throw new Error('Supabase not configured');
         const { error } = await supabase.from('leaderboard').upsert(
           { id: String(id), title, thumbnail, plays: 1 },
@@ -49,7 +49,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
       
       // 动态导入 supabase 相关模块
-      const { supabase } = await import('../../lib/supabase');
+      const { supabase } = await import('@/lib/supabase');
       if (!supabase) throw new Error('Supabase not configured');
       const { error } = await supabase.from('leaderboard').upsert(
         { id: String(id), title, thumbnail, plays: 1 },
