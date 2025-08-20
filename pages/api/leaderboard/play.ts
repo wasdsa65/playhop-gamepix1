@@ -9,17 +9,30 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     if (provider === 'firestore') {
-      // 动态导入 firebase 相关模块
-      const { getDb } = await import('../../lib/firebase');
-      const { doc, getDoc, setDoc, updateDoc, increment } = await import('firebase/firestore');
-      
-      const db = getDb();
-      const ref = doc(db, 'leaderboard', String(id));
-      const snap = await getDoc(ref);
-      if (snap.exists()) {
-        await updateDoc(ref, { plays: increment(1), title, thumbnail });
-      } else {
-        await setDoc(ref, { plays: 1, title, thumbnail });
+      try {
+        // 动态导入 firebase 相关模块
+        const { getDb } = await import('../../lib/firebase');
+        const { doc, getDoc, setDoc, updateDoc, increment } = await import('firebase/firestore');
+        
+        const db = getDb();
+        const ref = doc(db, 'leaderboard', String(id));
+        const snap = await getDoc(ref);
+        if (snap.exists()) {
+          await updateDoc(ref, { plays: increment(1), title, thumbnail });
+        } else {
+          await setDoc(ref, { plays: 1, title, thumbnail });
+        }
+      } catch (firebaseError) {
+        console.error('Firebase error:', firebaseError);
+        // 如果 Firebase 失败，回退到 Supabase
+        const { supabase } = await import('../../lib/supabase');
+        if (!supabase) throw new Error('Neither Firebase nor Supabase configured');
+        const { error } = await supabase.from('leaderboard').upsert(
+          { id: String(id), title, thumbnail, plays: 1 },
+          { onConflict: 'id', ignoreDuplicates: false }
+        ).select();
+        if (error) throw error;
+        await supabase.rpc('inc_play', { gid: String(id) }).catch(()=>{});
       }
     } else {
       // 动态导入 supabase 相关模块
