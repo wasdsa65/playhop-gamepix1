@@ -32,7 +32,9 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
       tags: g.tags || g.labels || [],
       rating: typeof g.quality_score === 'number' ? Math.round(g.quality_score * 100) : undefined,
     }));
-    return { props: { initial: { games: list, page, totalPages: Math.ceil((data.items?.length || 0) / pagination) || 1 }, sid } };
+    // 计算总页数：使用 API 返回的总页数，或者根据总游戏数量计算
+    const totalPages = data.total_pages || Math.ceil((data.total || data.items?.length || 0) / pagination) || 1;
+    return { props: { initial: { games: list, page, totalPages }, sid } };
   } catch (e) {
     return { props: { initial: { games: [], page, totalPages: 1 }, sid } };
   }
