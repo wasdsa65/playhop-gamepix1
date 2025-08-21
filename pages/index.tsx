@@ -109,20 +109,20 @@ function HomeContent({
         </div>
 
         {/* Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-          {filtered.map((g) => (
-            <div key={g.id} className="group relative overflow-hidden rounded-2xl border hover:shadow-md transition">
-              <div className="aspect-video w-full overflow-hidden">
-                <img src={g.thumb || ''} alt={g.title} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
-              </div>
-              <div className="p-2 flex items-center justify-between">
-                <div className="text-sm line-clamp-1">{g.title}</div>
-                <button onClick={()=>onPlay(g)} className="rounded-xl text-xs px-2 py-1 border"><Play className="inline-block h-3 w-3 mr-1" /> {t('play')}</button>
-              </div>
-              {typeof g.rating === 'number' && <div className="absolute top-2 right-2 rounded-full bg-black/70 text-white text-xs px-2 py-0.5">⭐ {g.rating}</div>}
-            </div>
-          ))}
-        </div>
+                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+           {filtered.map((g) => (
+             <div key={g.id} className="group relative overflow-hidden rounded-2xl border hover:shadow-md transition cursor-pointer" onClick={()=>onPlay(g)}>
+               <div className="aspect-video w-full overflow-hidden">
+                 <img src={g.thumb || ''} alt={g.title} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+               </div>
+               <div className="p-2 flex items-center justify-between">
+                 <div className="text-sm line-clamp-1">{g.title}</div>
+                 <button onClick={(e)=>{e.stopPropagation(); onPlay(g);}} className="rounded-xl text-xs px-2 py-1 border hover:bg-gray-100"><Play className="inline-block h-3 w-3 mr-1" /> {t('play')}</button>
+               </div>
+               {typeof g.rating === 'number' && <div className="absolute top-2 right-2 rounded-full bg-black/70 text-white text-xs px-2 py-0.5">⭐ {g.rating}</div>}
+             </div>
+           ))}
+         </div>
 
         {/* Load more */}
         {page < totalPages && (
@@ -297,7 +297,12 @@ function HomeWithI18n({ initial, sid }: Props) {
     } finally { setLoading(false); }
   }
 
-  function onPlay(game: Game) { setCurrent(game); setOpen(true); bumpPlayRemote(game.id, game.title, game.thumb); }
+  function onPlay(game: Game) { 
+    // 直接在新标签页打开游戏
+    window.open(game.url, '_blank');
+    // 记录游戏播放数据
+    bumpPlayRemote(game.id, game.title, game.thumb);
+  }
 
   return (
     <HomeContent 
