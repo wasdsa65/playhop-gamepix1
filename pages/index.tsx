@@ -35,20 +35,21 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
     return { props: { initial: { games: list, page, totalPages: data.total_pages || 1 }, sid } };
   } catch (e) {
     return { props: { initial: { games: [], page, totalPages: 1 }, sid } };
-}
+  }
+};
 
 function HomeContent({ 
   dark, setDark, games, page, totalPages, loading, q, setQ, category, setCategory, 
   open, setOpen, current, setCurrent, ratingMin, setRatingMin, tag, setTag, 
-  onPlay, loadMore, filtered, dailyPicks, tagSet, sid 
+  onPlay, loadMore, filtered, dailyPicks, tagSet, sid, t, lang, setLang
 }: {
   dark: boolean, setDark: (v: boolean) => void, games: Game[], page: number, totalPages: number, loading: boolean,
   q: string, setQ: (v: string) => void, category: string, setCategory: (v: string) => void,
   open: boolean, setOpen: (v: boolean) => void, current: Game | null, setCurrent: (v: Game | null) => void,
   ratingMin: number, setRatingMin: (v: number) => void, tag: string, setTag: (v: string) => void,
-  onPlay: (game: Game) => void, loadMore: () => void, filtered: Game[], dailyPicks: Game[], tagSet: string[], sid: string
+  onPlay: (game: Game) => void, loadMore: () => void, filtered: Game[], dailyPicks: Game[], tagSet: string[], sid: string,
+  t: (key: string) => string, lang: 'en'|'zh', setLang: (l: 'en'|'zh') => void
 }) {
-  const { t, lang, setLang } = useI18n();
   const categories = useMemo(() => {
     const set = new Set(['All', ...games.map(g => g.category || 'Other')]);
     return Array.from(set);
@@ -155,7 +156,7 @@ function HomeContent({
       </footer>
     </>
   );
-};
+}
 
 function Navbar({ dark, setDark, q, setQ, category, setCategory, categories, lang, setLang, t }:
   { dark:boolean,setDark:(v:boolean)=>void,q:string,setQ:(v:string)=>void,category:string,setCategory:(v:string)=>void,categories:string[],lang:'en'|'zh',setLang:(l:'en'|'zh')=>void, t:(key:string)=>string }) {
@@ -231,7 +232,9 @@ function PlayerModal({ open, game, onClose, t }:{open:boolean, game:Game|null, o
   );
 }
 
-export default function Home({ initial, sid }: Props) {
+function HomeWithI18n({ initial, sid }: Props) {
+  const { t, lang, setLang } = useI18n();
+  
   const [dark, setDark] = React.useState(false);
   const [games, setGames] = React.useState<Game[]>(initial.games);
   const [page, setPage] = React.useState(initial.page || 1);
@@ -296,35 +299,43 @@ export default function Home({ initial, sid }: Props) {
 
   function onPlay(game: Game) { setCurrent(game); setOpen(true); bumpPlayRemote(game.id, game.title, game.thumb); }
 
-    return (
-    <LanguageProvider initial="zh">
-      <HomeContent 
-        dark={dark} 
-        setDark={setDark} 
-        games={games} 
-        page={page} 
-        totalPages={totalPages} 
-        loading={loading} 
-        q={q} 
-        setQ={setQ} 
-        category={category} 
-        setCategory={setCategory} 
-        open={open} 
-        setOpen={setOpen} 
-        current={current} 
-        setCurrent={setCurrent} 
-        ratingMin={ratingMin} 
-        setRatingMin={setRatingMin} 
-        tag={tag} 
-        setTag={setTag} 
-        onPlay={onPlay} 
-        loadMore={loadMore} 
-        filtered={filtered} 
-        dailyPicks={dailyPicks} 
-        tagSet={tagSet} 
-        sid={sid} 
-      />
-    </LanguageProvider>
+  return (
+    <HomeContent 
+      dark={dark} 
+      setDark={setDark} 
+      games={games} 
+      page={page} 
+      totalPages={totalPages} 
+      loading={loading} 
+      q={q} 
+      setQ={setQ} 
+      category={category} 
+      setCategory={setCategory} 
+      open={open} 
+      setOpen={setOpen} 
+      current={current} 
+      setCurrent={setCurrent} 
+      ratingMin={ratingMin} 
+      setRatingMin={setRatingMin} 
+      tag={tag} 
+      setTag={setTag} 
+      onPlay={onPlay} 
+      loadMore={loadMore} 
+      filtered={filtered} 
+      dailyPicks={dailyPicks} 
+      tagSet={tagSet} 
+      sid={sid}
+      t={t}
+      lang={lang}
+      setLang={setLang}
+    />
   );
 }
+
+export default function Home({ initial, sid }: Props) {
+  return (
+    <LanguageProvider initial="zh">
+      <HomeWithI18n initial={initial} sid={sid} />
+    </LanguageProvider>
+  );
 }
