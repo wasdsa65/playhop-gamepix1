@@ -280,7 +280,8 @@ function HomeWithI18n({ initial, sid }: Props) {
   async function loadMore() {
     if (loading || page >= totalPages) return;
     setLoading(true);
-    const pagination = Number(process.env.NEXT_PUBLIC_GAMEPIX_PAGE_SIZE || 24);
+    // 使用固定的分页大小，因为这是客户端代码
+    const pagination = 24;
     const url = `https://feeds.gamepix.com/v2/json?sid=${sid}&pagination=${pagination}&page=${page+1}`;
     try{
       const res = await fetch(url);
