@@ -23,16 +23,16 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
   try {
     const res = await fetch(apiUrl);
     const data = await res.json();
-    const list = (data.games || []).map((g: any) => ({
+    const list = (data.items || []).map((g: any) => ({
       id: String(g.id),
       title: g.title,
       category: g.category || 'Other',
-      thumb: g.thumb,
+      thumb: g.banner_image || g.image || '',
       url: g.url,
       tags: g.tags || g.labels || [],
-      rating: typeof g.rating === 'number' ? g.rating : (typeof g.quality === 'number' ? g.quality : undefined),
+      rating: typeof g.quality_score === 'number' ? Math.round(g.quality_score * 100) : undefined,
     }));
-    return { props: { initial: { games: list, page, totalPages: data.total_pages || 1 }, sid } };
+    return { props: { initial: { games: list, page, totalPages: Math.ceil((data.items?.length || 0) / pagination) || 1 }, sid } };
   } catch (e) {
     return { props: { initial: { games: [], page, totalPages: 1 }, sid } };
   }
@@ -287,9 +287,9 @@ function HomeWithI18n({ initial, sid }: Props) {
     try{
       const res = await fetch(url);
       const data = await res.json();
-      const list: Game[] = (data.games || []).map((g:any)=>({
-        id: String(g.id), title: g.title, category: g.category || 'Other', thumb: g.thumb, url: g.url,
-        tags: g.tags || g.labels || [], rating: typeof g.rating === 'number' ? g.rating : (typeof g.quality === 'number' ? g.quality : undefined),
+      const list: Game[] = (data.items || []).map((g:any)=>({
+        id: String(g.id), title: g.title, category: g.category || 'Other', thumb: g.banner_image || g.image || '', url: g.url,
+        tags: g.tags || g.labels || [], rating: typeof g.quality_score === 'number' ? Math.round(g.quality_score * 100) : undefined,
       }));
       setGames(prev => [...prev, ...list]);
       setPage(prev => prev + 1);
