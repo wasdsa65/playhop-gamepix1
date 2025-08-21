@@ -40,12 +40,11 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
 
 function HomeContent({ 
   dark, setDark, games, page, totalPages, loading, q, setQ, category, setCategory, 
-  open, setOpen, current, setCurrent, ratingMin, setRatingMin, tag, setTag, 
+  ratingMin, setRatingMin, tag, setTag, 
   onPlay, loadMore, filtered, dailyPicks, tagSet, sid, t, lang, setLang
 }: {
   dark: boolean, setDark: (v: boolean) => void, games: Game[], page: number, totalPages: number, loading: boolean,
   q: string, setQ: (v: string) => void, category: string, setCategory: (v: string) => void,
-  open: boolean, setOpen: (v: boolean) => void, current: Game | null, setCurrent: (v: Game | null) => void,
   ratingMin: number, setRatingMin: (v: number) => void, tag: string, setTag: (v: string) => void,
   onPlay: (game: Game) => void, loadMore: () => void, filtered: Game[], dailyPicks: Game[], tagSet: string[], sid: string,
   t: (key: string) => string, lang: 'en'|'zh', setLang: (l: 'en'|'zh') => void
@@ -147,7 +146,7 @@ function HomeContent({
         </section>
       </main>
 
-      <PlayerModal open={open} game={current} onClose={()=>setOpen(false)} t={t} />
+      
 
       <footer className="mt-16 border-t">
         <div className="mx-auto max-w-7xl px-4 py-8 text-center text-sm opacity-70">
@@ -242,8 +241,7 @@ function HomeWithI18n({ initial, sid }: Props) {
   const [loading, setLoading] = React.useState(false);
   const [q, setQ] = React.useState('');
   const [category, setCategory] = React.useState('All');
-  const [open, setOpen] = React.useState(false);
-  const [current, setCurrent] = React.useState<Game|null>(null);
+
   const [ratingMin, setRatingMin] = React.useState<number>(0);
   const [tag, setTag] = React.useState<string>('');
 
@@ -305,35 +303,31 @@ function HomeWithI18n({ initial, sid }: Props) {
   }
 
   return (
-    <HomeContent 
-      dark={dark} 
-      setDark={setDark} 
-      games={games} 
-      page={page} 
-      totalPages={totalPages} 
-      loading={loading} 
-      q={q} 
-      setQ={setQ} 
-      category={category} 
-      setCategory={setCategory} 
-      open={open} 
-      setOpen={setOpen} 
-      current={current} 
-      setCurrent={setCurrent} 
-      ratingMin={ratingMin} 
-      setRatingMin={setRatingMin} 
-      tag={tag} 
-      setTag={setTag} 
-      onPlay={onPlay} 
-      loadMore={loadMore} 
-      filtered={filtered} 
-      dailyPicks={dailyPicks} 
-      tagSet={tagSet} 
-      sid={sid}
-      t={t}
-      lang={lang}
-      setLang={setLang}
-    />
+         <HomeContent 
+       dark={dark} 
+       setDark={setDark} 
+       games={games} 
+       page={page} 
+       totalPages={totalPages} 
+       loading={loading} 
+       q={q} 
+       setQ={setQ} 
+       category={category} 
+       setCategory={setCategory} 
+       ratingMin={ratingMin} 
+       setRatingMin={setRatingMin} 
+       tag={tag} 
+       setTag={setTag} 
+       onPlay={onPlay} 
+       loadMore={loadMore} 
+       filtered={filtered} 
+       dailyPicks={dailyPicks} 
+       tagSet={tagSet} 
+       sid={sid}
+       t={t}
+       lang={lang}
+       setLang={setLang}
+     />
   );
 }
 
